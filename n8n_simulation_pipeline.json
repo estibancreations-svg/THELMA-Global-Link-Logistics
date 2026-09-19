@@ -1,0 +1,78 @@
+
+{
+  "name": "THELMA_FLOW_VEO_Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "generate-simulation",
+        "options": {}
+      },
+      "name": "Webhook_UI_Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "modelId": "gemini-1.5-pro",
+        "prompt": "={{ 'Act as a Simulation Director using Gemini FLOW. \nInput Context: ' + $json.body.payload.asset_context.name + '\nUser Scenario: ' + $json.body.payload.prompt + '\n\nOUTPUT: Create a detailed scene description for Google Veo video generation. Focus on lighting, physics, and critical failure points.' }}"
+      },
+      "name": "Gemini_FLOW_Director",
+      "type": "n8n-nodes-base.googleGeminiChat",
+      "typeVersion": 1,
+      "position": [250, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.google.com/veo/generate", 
+        "authentication": "genericCredentialType",
+        "genericAuthType": "headerAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "={{ $json.text }}" 
+            },
+            {
+              "name": "resolution",
+              "value": "4k"
+            },
+            {
+              "name": "framerate",
+              "value": "60"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "VEO_Video_Generator",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [500, 0],
+      "notes": "Sends the FLOW-enhanced prompt to VEO."
+    },
+    {
+      "parameters": {
+        "jsCode": "return { json: { status: 'SUCCESS', video_url: $json.video_url, duration: '15s' } };"
+      },
+      "name": "Format_Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [750, 0]
+    }
+  ],
+  "connections": {
+    "Webhook_UI_Trigger": {
+      "main": [[{"node": "Gemini_FLOW_Director", "type": "main", "index": 0}]]
+    },
+    "Gemini_FLOW_Director": {
+      "main": [[{"node": "VEO_Video_Generator", "type": "main", "index": 0}]]
+    },
+    "VEO_Video_Generator": {
+      "main": [[{"node": "Format_Response", "type": "main", "index": 0}]]
+    }
+  }
+}

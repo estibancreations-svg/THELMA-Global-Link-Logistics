@@ -1,0 +1,78 @@
+
+{
+  "name": "THELMA_Master_Relay_v3",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "thelma-command-relay",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "id": "ai-trigger",
+      "name": "👂 AI_Trigger",
+      "notes": "Listens for commands from T.H.E.L.M.A."
+    },
+    {
+      "parameters": {
+        "jsCode": "// DECISION LOGIC\nconst d = $input.item.json.directive || '';\nif(d.includes('DEPLOY')) return {json:{path:'DEPLOY'}};\nif(d.includes('SIM')) return {json:{path:'SIM'}};\nreturn {json:{path:'STATUS'}};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [250, 0],
+      "id": "the-brain",
+      "name": "🧠 The_Brain",
+      "notes": "Decides: Deploy Code OR Run Sim?"
+    },
+    {
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{ $json.path }}",
+        "rules": {
+          "rules": [
+            { "value2": "DEPLOY", "output": 0 },
+            { "value2": "SIM", "output": 1 },
+            { "value2": "STATUS", "output": 2 }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [500, 0],
+      "id": "the-router",
+      "name": "🔀 The_Router"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.antigravity.dev/deploy",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [800, -100],
+      "id": "action-deploy",
+      "name": "🚀 Action: DEPLOY"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.oculus.com/trigger-sim",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [800, 100],
+      "id": "action-vr-sim",
+      "name": "🥽 Action: VR_SIM"
+    }
+  ],
+  "connections": {
+    "👂 AI_Trigger": { "main": [[{"node": "🧠 The_Brain", "type": "main", "index": 0}]] },
+    "🧠 The_Brain": { "main": [[{"node": "🔀 The_Router", "type": "main", "index": 0}]] },
+    "🔀 The_Router": { "main": [[{"node": "🚀 Action: DEPLOY", "type": "main", "index": 0}], [{"node": "🥽 Action: VR_SIM", "type": "main", "index": 0}]] }
+  }
+}
