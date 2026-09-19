@@ -1,0 +1,10 @@
+{
+  "name": "T.H.E.L.M.A. AI Core & Modules",
+  "description": "T.H.E.L.M.A. AI v4.0.0 Enterprise Federation. Unified command for Fleet, Aviation, Project Z, and Personnel via Global Mesh.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation",
+    "bluetooth"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "name": "thelma-core",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@capacitor/app": "^8.0.1",
+    "@capacitor/device": "^8.0.1",
+    "@capacitor/geolocation": "^8.1.0",
+    "@capacitor/local-notifications": "^8.0.1",
+    "@google/genai": "^1.34.0",
+    "@react-three/drei": "^9.105.4",
+    "@react-three/fiber": "^8.16.1",
+    "framer-motion": "^11.0.24",
+    "lucide-react": "^0.368.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "recharts": "^2.12.7",
+    "three": "^0.163.0"
+  },
+  "overrides": {
+    "react": "$react",
+    "react-dom": "$react-dom"
+  },
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.2.1",
+    "typescript": "~5.8.2",
+    "vite": "^5.2.0"
+  }
+}
